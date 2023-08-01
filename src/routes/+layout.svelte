@@ -1,7 +1,7 @@
 <script lang="ts">
-	import '../app.css';
+	import '../app.css'
 
-	import Hamburger from '$lib/icons/Hamburger.svelte';
+	import Hamburger from '$lib/icons/Hamburger.svelte'
 </script>
 
 <div class="drawer xl:drawer-open overflow-y-scroll h-full">
