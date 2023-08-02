@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+
+	import type { RequestSchema } from './token/+server'
 	import type { Plaid } from 'plaid-link'
 	import type { PageData } from './$types'
 
@@ -11,9 +13,20 @@
 		plaidHandler = window.Plaid.create({
 			token: data.link_token,
 			onSuccess: async (public_token, metadata) => {
+				if (!metadata.institution) {
+					console.log('No institution')
+					return
+				}
+
+				const payload = {
+					public_token,
+					account_ids: metadata.accounts.map((account) => account.id),
+					institution: metadata.institution
+				}
+
 				await fetch('/link/token', {
 					method: 'POST',
-					body: JSON.stringify({ public_token }),
+					body: JSON.stringify(payload satisfies RequestSchema),
 					headers: {
 						'Content-Type': 'application/json'
 					}
