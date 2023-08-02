@@ -2,7 +2,10 @@
  * Convert a number into a currency string.
  * @default style = 'currency', currency = 'USD'
  */
-export function formatToCurrency(value?: number | null, options?: Intl.NumberFormatOptions) {
+export default function formatToCurrency(
+	value?: number | null,
+	options?: Intl.NumberFormatOptions
+) {
 	if (!value) {
 		return 'Unknown'
 	}
