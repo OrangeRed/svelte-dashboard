@@ -14,6 +14,9 @@ dependencies:
   plaid:
     specifier: ^15.2.0
     version: 15.2.0
+  pocketbase:
+    specifier: ^0.16.0
+    version: 0.16.0
 
 devDependencies:
   '@commitlint/cli':
@@ -2534,6 +2537,10 @@ packages:
       axios: 0.21.4
     transitivePeerDependencies:
       - debug
+    dev: false
+
+  /pocketbase@0.16.0:
+    resolution: {integrity: sha512-sndPu4Mbu1Y2VefvO2gIa/No5aIdP6E5br9HUGomvDYSfkmGfBxJNkivJSSKlr9KwWnaF8otf14304UUeFGOrA==}
     dev: false
 
   /postcss-import@15.1.0(postcss@8.4.27):
