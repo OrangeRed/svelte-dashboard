@@ -18,7 +18,7 @@ export const load: PageServerLoad = async () => {
 		}
 	} catch (e) {
 		if (isPlaidError(e)) {
-			console.log(e.message)
+			console.log(e.response?.data.error_type, e.response?.data.error_message)
 			throw error(501)
 		}
 

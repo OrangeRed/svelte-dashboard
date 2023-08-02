@@ -47,6 +47,7 @@ export const load: PageServerLoad = async () => {
 			}
 		})
 
+		// Clean this up using reduce instead
 		const investments = res.data.accounts
 			.filter((account) => account.type === 'investment')
 			.map((account) => {
