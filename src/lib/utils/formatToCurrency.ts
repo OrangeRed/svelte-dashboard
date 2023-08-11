@@ -6,7 +6,7 @@ export default function formatToCurrency(
 	value?: number | null,
 	options?: Intl.NumberFormatOptions
 ) {
-	if (!value) {
+	if (!value && value !== 0) {
 		return 'Unknown'
 	}
 

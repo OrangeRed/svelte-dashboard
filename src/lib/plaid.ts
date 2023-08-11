@@ -21,12 +21,14 @@ const configuration = new Configuration({
 
 export const plaid = new PlaidApi(configuration)
 
+// Remove `{ [key: string]: unknown }` from inside of a type
 type RemoveIndex<T> = {
 	[K in keyof T as K extends `${infer K}` ? K : never]: T[K]
 }
 
 // Replace error_type enum with union type for completions
 type betterPlaidError = Omit<RemoveIndex<PlaidError>, 'error_type'> & {
+	[key: string]: unknown
 	error_type: `${PlaidErrorType}`
 }
 
