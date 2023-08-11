@@ -1,20 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 
-	import type { RequestSchema } from './token/+server'
+	import type { RequestSchema } from '../../routes/_/token/+server'
 	import type { Plaid } from 'plaid-link'
-	import type { PageData } from './$types'
 
-	export let data: PageData
+	export let text: string
+	export let link_token: string
 
-	let plaidHandler: Plaid.LinkHandler
+	let plaidLink: Plaid.LinkHandler
 
 	onMount(async () => {
-		plaidHandler = window.Plaid.create({
-			token: data.link_token,
+		plaidLink = window.Plaid.create({
+			token: link_token,
 			onSuccess: async (public_token, metadata) => {
 				if (!metadata.institution) {
-					console.log('No institution')
+					console.log('Unknown institution')
 					return
 				}
 
@@ -24,15 +24,15 @@
 					institution: metadata.institution
 				}
 
-				await fetch('/link/token', {
+				console.log(payload, metadata, public_token)
+
+				await fetch('/_/token', {
 					method: 'POST',
 					body: JSON.stringify(payload satisfies RequestSchema),
 					headers: {
 						'Content-Type': 'application/json'
 					}
 				})
-
-				console.log(public_token, metadata)
 			}
 		})
 	})
@@ -42,6 +42,4 @@
 	<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 </svelte:head>
 
-<div>Link token: {data.link_token}</div>
-
-<button class="btn btn-primary" on:click={() => plaidHandler.open()}>Click me</button>
+<button class="btn btn-primary" on:click={() => plaidLink.open()}>{text}</button>

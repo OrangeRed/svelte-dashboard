@@ -9,10 +9,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '')
 
-	if (!event.locals.pb.authStore.token) {
-		await event.locals.pb.admins.authWithPassword(POCKETBASE_ADMIN, POCKETBASE_ADMIN_PASSWORD)
-	}
-
 	try {
 		// get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
 		event.locals.pb.authStore.isValid && (await event.locals.pb.admins.authRefresh())

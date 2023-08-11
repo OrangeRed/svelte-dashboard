@@ -1,5 +1,5 @@
 import { z, ZodError } from 'zod'
-import { error } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
 
 import { isPlaidError, plaid } from '$lib/plaid'
 import { Collections, type AccessTokensRecord } from '$lib/pocketbase/types'
@@ -23,8 +23,6 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		const data = await request.json()
 		const { public_token, institution, account_ids } = requestSchema.parse(data)
 
-		console.log(institution)
-
 		const record = await locals.pb
 			.collection(Collections.AccessTokens)
 			.getFirstListItem(
@@ -35,16 +33,16 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		if (!record) {
 			const { data: item } = await plaid.itemPublicTokenExchange({ public_token })
 
-			console.log('access token: ', item.access_token)
-			console.log('item id: ', item.item_id)
+			// const { data: itemDetails } = await plaid.itemGet({ access_token: item.access_token })
+			// console.log(itemDetails.item)
 
-			const stuff = await locals.pb.collection(Collections.AccessTokens).create({
+			await locals.pb.collection(Collections.AccessTokens).create({
 				access_token: item.access_token,
 				institution_id: institution.institution_id,
 				institution_name: institution.name
 			} satisfies AccessTokensRecord)
-
-			console.log(stuff)
+		} else {
+			console.log('Record Exists', data)
 		}
 	} catch (e) {
 		if (e instanceof ZodError) {
@@ -61,5 +59,5 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		throw error(500)
 	}
 
-	return new Response()
+	throw redirect(303, '/')
 }
