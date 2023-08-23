@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
 
 	import type { RequestSchema } from 'src/routes/_/token/+server'
 	import type { Plaid } from 'plaid-link'
@@ -33,6 +34,8 @@
 						'Content-Type': 'application/json'
 					}
 				})
+
+				goto('/')
 			}
 		})
 	})

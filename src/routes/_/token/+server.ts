@@ -6,6 +6,7 @@ import { Collections, type AccessTokensRecord } from '$lib/pocketbase'
 import { where } from '$lib/pocketbase/utils'
 
 import type { RequestHandler } from './$types'
+import type { Products } from 'plaid'
 
 export type RequestSchema = z.infer<typeof requestSchema>
 
@@ -31,16 +32,20 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 			.catch(() => null) // Don't throw if the record doesn't exist
 
 		if (!record) {
-			const { data: item } = await plaid.itemPublicTokenExchange({ public_token })
+			const {
+				data: { access_token }
+			} = await plaid.itemPublicTokenExchange({ public_token })
 
-			// const { data: itemDetails } = await plaid.itemGet({ access_token: item.access_token })
-			// console.log(itemDetails.item)
+			const {
+				data: { item }
+			} = await plaid.itemGet({ access_token })
 
 			await locals.pb.collection(Collections.AccessTokens).create({
-				access_token: item.access_token,
+				access_token: access_token,
 				institution_id: institution.institution_id,
-				institution_name: institution.name
-			} satisfies AccessTokensRecord)
+				institution_name: institution.name,
+				enabled_products: item.billed_products
+			} satisfies AccessTokensRecord<Products[]>)
 		} else {
 			console.log('Record Exists', data)
 		}
@@ -59,5 +64,5 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		throw error(500)
 	}
 
-	throw redirect(303, '/')
+	return new Response('success')
 }

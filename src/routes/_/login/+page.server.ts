@@ -13,7 +13,11 @@ const loginSchema = z
 	})
 	.required()
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ locals }) => {
+	if (locals.pb.authStore.isValid) {
+		throw redirect(303, '/_')
+	}
+
 	return {
 		form: superValidate(loginSchema)
 	}
@@ -37,6 +41,6 @@ export const actions: Actions = {
 			console.log(e)
 		}
 
-		throw redirect(303, '/')
+		throw redirect(303, '/_')
 	}
 }
