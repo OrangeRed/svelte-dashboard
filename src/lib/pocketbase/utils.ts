@@ -1,4 +1,4 @@
-import type { BaseSystemFields } from './types'
+import type { BaseSystemFields } from '$lib/pocketbase'
 
 type TableColumns<T> = T extends ''
 	? keyof Omit<BaseSystemFields, 'expand'>

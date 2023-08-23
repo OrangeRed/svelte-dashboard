@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 
-	import type { RequestSchema } from '../../routes/_/token/+server'
+	import type { RequestSchema } from 'src/routes/_/token/+server'
 	import type { Plaid } from 'plaid-link'
 
 	export let text: string

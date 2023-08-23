@@ -11,7 +11,7 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"pb:serve": "./pocketbase/pocketbase serve",
-		"pb:gen": "pnpx pocketbase-typegen --db ./pocketbase/pb_data/data.db --out ./src/lib/pocketbase/types.ts"
+		"pb:gen": "pnpx pocketbase-typegen --db ./pocketbase/pb_data/data.db --out ./src/lib/pocketbase/index.ts"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.6.7",

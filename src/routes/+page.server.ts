@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit'
 
-import { Collections, type AccessTokensResponse } from '$lib/pocketbase/types'
+import { Collections, type AccessTokensResponse } from '$lib/pocketbase'
 import { plaid, isPlaidError } from '$lib/plaid'
 import {
 	Products,

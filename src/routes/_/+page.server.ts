@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { Collections, type AccessTokensResponse } from '$lib/pocketbase/types'
+import { Collections, type AccessTokensResponse } from '$lib/pocketbase'
 import { CountryCode, Products, type LinkTokenCreateRequest } from 'plaid'
 import { isPlaidError, plaid } from '$lib/plaid'
 

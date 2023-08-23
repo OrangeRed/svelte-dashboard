@@ -31,10 +31,11 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type AccessTokensRecord = {
+export type AccessTokensRecord<Tenabled_products = unknown> = {
 	access_token: string
 	institution_id: string
 	institution_name?: string
+	enabled_products?: null | Tenabled_products
 }
 
 export type UsersRecord = {
@@ -43,7 +44,7 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type AccessTokensResponse<Texpand = unknown> = Required<AccessTokensRecord> & BaseSystemFields<Texpand>
+export type AccessTokensResponse<Tenabled_products = unknown, Texpand = unknown> = Required<AccessTokensRecord<Tenabled_products>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions

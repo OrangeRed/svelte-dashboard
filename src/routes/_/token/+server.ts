@@ -2,7 +2,7 @@ import { z, ZodError } from 'zod'
 import { error, redirect } from '@sveltejs/kit'
 
 import { isPlaidError, plaid } from '$lib/plaid'
-import { Collections, type AccessTokensRecord } from '$lib/pocketbase/types'
+import { Collections, type AccessTokensRecord } from '$lib/pocketbase'
 import { where } from '$lib/pocketbase/utils'
 
 import type { RequestHandler } from './$types'
