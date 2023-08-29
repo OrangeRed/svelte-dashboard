@@ -1,26 +1,19 @@
 # Sveltekit Financial Dashboard
 
-A repo containing the source code for the financial dashboard that I use to monitor my assets, balances and credit cards.
+The source code for the financial dashboard that I use to monitor my assets, balances and credit cards.
 
 ### Main Packages
 
-[^Sveltekit]: https://img.shields.io/badge/sveltekit-gray?logo=svelte&style=for-the-badge
-[^Plaid]: https://img.shields.io/badge/plaid-gray?logo=diaspora&style=for-the-badge
-[^Zod]: https://img.shields.io/badge/zod-gray?logo=zod&style=for-the-badge
-[^Pocketbase]: https://img.shields.io/badge/pocketbase-gray?logo=pocketbase&style=for-the-badge
-[^DaisyUI]: https://img.shields.io/badge/daisyui-gray?logo=daisyui&style=for-the-badge
-[^Tailwindcss]: https://img.shields.io/badge/tailwindcss-gray?logo=tailwindcss&style=for-the-badge
-
-[![^Sveltekit]](https://kit.svelte.dev/)
-[![^Plaid]](https:/plaid.com/docs/)
-[![^Zod]](https://zod.dev/)
-[![^Pocketbase]](https://kit.svelte.dev/)
-[![^DaisyUI]](https://daisyui.com/)
-[![^TailwindCSS]](https://tailwindcss.com/)
+[![Sveltekit](https://img.shields.io/badge/sveltekit-gray?logo=svelte&style=for-the-badge)](https://kit.svelte.dev/)
+[![Plaid](https://img.shields.io/badge/plaid-gray?logo=diaspora&style=for-the-badge)](https://plaid.com/docs/)
+[![Zod](https://img.shields.io/badge/zod-gray?logo=zod&style=for-the-badge)](https://zod.dev/)
+[![Pocketbase](https://img.shields.io/badge/pocketbase-gray?logo=pocketbase&style=for-the-badge)](https://pocketbase.io/)
+[![DaisyUI](https://img.shields.io/badge/daisyui-gray?logo=daisyui&style=for-the-badge)](https://daisyui.com/)
+[![TailwindCSS](https://img.shields.io/badge/tailwindcss-gray?logo=tailwindcss&style=for-the-badge)](https://tailwindcss.com/)
 
 ### Routes
 
-```
+```gql
 routes
  ├── /
  └── /(admin)
