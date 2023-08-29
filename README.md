@@ -1,38 +1,40 @@
-# create-svelte
+# Sveltekit Financial Dashboard
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A repo containing the source code for the financial dashboard that I use to monitor my assets, balances and credit cards.
 
-## Creating a project
+### Main Packages
 
-If you're seeing this, you've probably already done this step. Congrats!
+[^Sveltekit]: https://img.shields.io/badge/sveltekit-gray?logo=svelte&style=for-the-badge
+[^Plaid]: https://img.shields.io/badge/plaid-gray?logo=diaspora&style=for-the-badge
+[^Zod]: https://img.shields.io/badge/zod-gray?logo=zod&style=for-the-badge
+[^Pocketbase]: https://img.shields.io/badge/pocketbase-gray?logo=pocketbase&style=for-the-badge
+[^DaisyUI]: https://img.shields.io/badge/daisyui-gray?logo=daisyui&style=for-the-badge
+[^Tailwindcss]: https://img.shields.io/badge/tailwindcss-gray?logo=tailwindcss&style=for-the-badge
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+[![^Sveltekit]](https://kit.svelte.dev/)
+[![^Plaid]](https:/plaid.com/docs/)
+[![^Zod]](https://zod.dev/)
+[![^Pocketbase]](https://kit.svelte.dev/)
+[![^DaisyUI]](https://daisyui.com/)
+[![^TailwindCSS]](https://tailwindcss.com/)
 
-# create a new project in my-app
-npm create svelte@latest my-app
+### Routes
+
+```
+routes
+ ├── /
+ └── /(admin)
+      ├── /login
+      │   └── Place auth cookie onto browser
+      └── /token
+          └── Exchange public_token for access_token
 ```
 
-## Developing
+## Roadmap
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+- [x] Deploy app and database
+- [ ] Upgrade Plaid
+  - [ ] Up plaid tier to enable OAuth
+  - [ ] Implement OAuth routing for banks that require it.
+- [ ] Set up [Sentry](https://sentry.io/) to move errors out of the console
+- [ ] Set up [New Relic](https://newrelic.com/) for site analytics
