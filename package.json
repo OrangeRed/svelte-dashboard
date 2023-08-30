@@ -1,6 +1,7 @@
 {
 	"name": "svelte-dashboard",
 	"version": "0.0.1",
+	"type": "module",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -8,8 +9,8 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write .",
+		"lint": "prettier --check ./ && eslint ./",
+		"format": "prettier --write ./",
 		"pb:gen": "pnpx pocketbase-typegen --env --out ./src/lib/pocketbase/index.ts"
 	},
 	"devDependencies": {
@@ -47,7 +48,6 @@
 		"plaid": "^15.2.0",
 		"pocketbase": "^0.16.0"
 	},
-	"type": "module",
 	"commitlint": {
 		"extends": [
 			"@commitlint/config-conventional"
