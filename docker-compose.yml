@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  pocketbase:
+    build: .
+    container_name: plaid_db
+    restart: unless-stopped
+    ports:
+      - '8090:8090'
+    volumes:
+      - plaid_data:/pb/pb_data
+
+volumes:
+  plaid_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './pb/pb_data'

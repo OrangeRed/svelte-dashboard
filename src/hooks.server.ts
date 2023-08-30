@@ -1,4 +1,4 @@
-import { POCKETBASE_ADMIN, POCKETBASE_ADMIN_PASSWORD, POCKETBASE_URL } from '$env/static/private'
+import { POCKETBASE_URL } from '$env/static/private'
 
 import Pocketbase from 'pocketbase'
 
