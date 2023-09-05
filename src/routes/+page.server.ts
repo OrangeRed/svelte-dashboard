@@ -1,5 +1,4 @@
 import { error } from '@sveltejs/kit'
-
 import { Collections, type AccessTokensResponse } from '$lib/pocketbase'
 import { plaid, isPlaidError } from '$lib/plaid'
 import {
@@ -9,55 +8,106 @@ import {
 	type Security,
 	type CreditCardLiability,
 	type InvestmentsHoldingsGetResponse,
-	type LiabilitiesGetResponse
+	type LiabilitiesGetResponse,
+	type Transaction
 } from 'plaid'
 
 import type { PageServerLoad } from './$types'
 
-type Investments = AccountBase & {
+type InvestmentAccount = AccountBase & {
 	holdings: (Holding & {
 		name?: Security['name']
 		ticker_symbol?: Security['ticker_symbol']
 	})[]
 }
 
+type CreditCardAccount = AccountBase &
+	Partial<CreditCardLiability> & {
+		transactions: Transaction[]
+	}
+
 export const load: PageServerLoad = async ({ locals }) => {
 	try {
 		const tokens = await locals.pb
 			.collection(Collections.AccessTokens)
-			.getFullList<AccessTokensResponse>()
+			.getFullList<AccessTokensResponse<Products[]>>()
 
 		const institutions = await Promise.all(
-			tokens.map(async ({ access_token, institution_name }) => {
+			tokens.map(async ({ access_token, institution_name, enabled_products }) => {
 				let data: Partial<InvestmentsHoldingsGetResponse & LiabilitiesGetResponse> = {}
-
-				const {
-					data: { item }
-				} = await plaid.itemGet({ access_token })
-
-				console.log('Item:', institution_name, item.billed_products)
-
-				if (item.billed_products.includes(Products.Investments)) {
-					const { data: holdings } = await plaid.investmentsHoldingsGet({ access_token })
-
-					data = Object.assign(data, holdings)
-				}
-
-				if (item.billed_products.includes(Products.Liabilities)) {
-					const { data: liabilities } = await plaid.liabilitiesGet({ access_token })
-
-					data = Object.assign(data, liabilities)
-				}
+				const institutionAccounts: {
+					credit?: CreditCardAccount[]
+					investments?: InvestmentAccount[]
+				} = {}
 
 				const { data: transactions } = await plaid.transactionsSync({ access_token })
 
+				if (enabled_products?.includes(Products.Investments)) {
+					const {
+						data: { accounts, holdings, securities }
+					} = await plaid.investmentsHoldingsGet({ access_token })
+
+					const securitiesMap = securities.reduce(
+						(hashMap, security) => hashMap.set(security.security_id, security),
+						new Map<string, Security>()
+					)
+
+					const holdingsMap = holdings.reduce((hashMap, holding) => {
+						const security = securitiesMap.get(holding.security_id)
+
+						const updatedHolding = Object.assign(holding, {
+							name: security?.name,
+							ticker_symbol: security?.ticker_symbol
+						})
+
+						const accountHoldings = hashMap.get(holding.account_id) ?? []
+
+						accountHoldings.push(updatedHolding)
+
+						return hashMap.set(holding.account_id, accountHoldings)
+					}, new Map<string, InvestmentAccount['holdings']>())
+
+					const investments = accounts
+						.filter((account) => {
+							if (account.type === 'brokerage' || account.type === 'investment') {
+								// totals.investments += account.balances.current ?? 0
+								return true
+							}
+						})
+						.map((account) =>
+							Object.assign(account, { holdings: holdingsMap.get(account.account_id) ?? [] })
+						)
+
+					institutionAccounts.investments = investments
+				}
+
+				if (enabled_products?.includes(Products.Liabilities)) {
+					const {
+						data: { liabilities, accounts }
+					} = await plaid.liabilitiesGet({ access_token })
+
+					const credit = accounts
+						.filter((account) => account.type === 'credit')
+						.map((account) => {
+							return Object.assign(account, {
+								...liabilities.credit?.find(
+									(creditCard) => creditCard.account_id === account.account_id
+								),
+								transactions: transactions.added.filter(
+									(transaction) => transaction.account_id === account.account_id
+								)
+							})
+						})
+
+					institutionAccounts.credit = credit
+				}
+
 				return Object.assign(data, {
+					flattened: institutionAccounts,
 					transactions: transactions.added,
-					nextTransaction: transactions.next_cursor,
+					nextTransactions: transactions.next_cursor,
 					hasMoreTransactions: transactions.has_more
 				})
-
-				// return data
 			})
 		)
 
@@ -77,62 +127,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 			return accounts.concat(cashAccounts ?? [])
 		}, [] as AccountBase[])
 
-		const allCreditAccounts = institutions.reduce(
-			(accounts, institution) => {
-				const creditAccounts = institution.accounts
-					?.filter((account) => account.type === 'credit')
-					?.map((account) => {
-						return Object.assign(account, {
-							...institution.liabilities?.credit?.find(
-								(creditCard) => creditCard.account_id === account.account_id
-							),
-							transactions: institution.transactions.filter(
-								(transaction) => transaction.account_id === account.account_id
-							)
-						})
-					})
-
-				return accounts.concat(creditAccounts ?? [])
-			},
-			[] as Array<AccountBase & Partial<CreditCardLiability>>
-		)
-
-		const allInvestmentAccounts = institutions.reduce((accounts, institution) => {
-			const investmentAccounts = institution.accounts?.filter((account) => {
-				if (account.type === 'brokerage' || account.type === 'investment') {
-					totals.investments += account.balances.current ?? 0
-					return true
-				}
-			})
-
-			const investmentsWithHoldings = investmentAccounts?.map((account) => {
-				const holdings =
-					institution.holdings?.reduce(
-						(holdings, curr) => {
-							if (curr.account_id === account.account_id) {
-								const security = institution.securities?.find(
-									(security) => security.security_id === curr.security_id
-								)
-
-								holdings.push(
-									Object.assign(curr, {
-										name: security?.name,
-										ticker_symbol: security?.ticker_symbol
-									}) satisfies Investments['holdings'][0]
-								)
-							}
-
-							return holdings
-						},
-						[] as Investments['holdings']
-					) ?? []
-
-				return Object.assign(account, { holdings }) satisfies Investments
-			})
-
-			return accounts.concat(investmentsWithHoldings ?? [])
-		}, [] as Investments[])
-
 		const allSecurities = institutions.reduce((securities, curr) => {
 			if (!curr.securities) {
 				return securities
@@ -144,6 +138,14 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 			return securities
 		}, new Map<string, Security>())
+
+		const allCreditAccounts = institutions
+			.map((institution) => institution.flattened.credit ?? [])
+			.flat()
+
+		const allInvestmentAccounts = institutions
+			.map((institution) => institution.flattened.investments ?? [])
+			.flat()
 
 		return {
 			cash: allCashAccounts,

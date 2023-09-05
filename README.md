@@ -16,16 +16,16 @@ The source code for the financial dashboard that I use to monitor my assets, bal
 ```gql
 routes
  ├── /
- └── /(admin)
-      ├── /login
-      │   └── Place auth cookie onto browser
-      └── /token
-          └── Exchange public_token for access_token
+ └── (admin)
+      ├── login
+      │   └── "Place auth cookie onto browser"
+      └── token
+          └── "Exchange public_token for access_token"
 ```
 
 ## Roadmap
 
-- [x] Deploy app and database
+- [ ] Deploy app and database
 - [ ] Upgrade Plaid
   - [ ] Up plaid tier to enable OAuth
   - [ ] Implement OAuth routing for banks that require it.

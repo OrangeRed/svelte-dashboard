@@ -1,6 +1,10 @@
 /**
  * Convert a number into a currency string.
- * @default style = 'currency', currency = 'USD'
+ *
+ * @default
+ * ```
+ * style = 'currency', currency = 'USD'
+ * ```
  */
 export default function formatToCurrency(
 	value?: number | null,
